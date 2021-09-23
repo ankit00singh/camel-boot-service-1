@@ -3,6 +3,7 @@ package com.online.assignment.camelbootservice1.routes;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,7 @@ public class UserExposeRoute extends AbstractUserRoute {
                 .dataFormatProperty("prettyPrint", "true")
                 .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES")
                 .host(restApiHost)
+                .port(9095)
                 .contextPath(restApiBaseUrl)
                 .apiContextPath(swaggerUrl)
                 .apiProperty("api.description", restApiDesc)
@@ -70,7 +72,7 @@ public class UserExposeRoute extends AbstractUserRoute {
         rest().description("Get User Info REST Service")
             .consumes(APPLICATION_JSON).produces(APPLICATION_JSON)
 
-            .get(getUserResourcePath + "?" +  USER_ID + "={" + USER_ID + "}")
+            .get(getUserResourcePath)
             .produces(APPLICATION_JSON)
             .responseMessage().code(200).message("The Get User model").responseModel(User.class).endResponseMessage()
             .description("Get User details from file")
@@ -100,11 +102,9 @@ public class UserExposeRoute extends AbstractUserRoute {
                 .log(LoggingLevel.DEBUG, "Get User Details request execution completed.")
                 .id(ROUTE_END)
             .end()
-            .log(LoggingLevel.INFO, "Get User Details request received for User ID: ${headers." + USER_ID + "}")
-            .bean("userValidators", "verifyUserId")
-            .setHeader("to", () -> "INR")
-            .log("${body}")
-            .to("rest:get:currencyExcange/from/EUR/to/INR")
+            .log(LoggingLevel.INFO, "Get User Details request received ")
+            .to("rest:get:/com/user/service2/v1/getUserDetails?bridgeEndpoint=true")
+            .unmarshal().json(JsonLibrary.Jackson, User.class)
             .removeHeaders("*", HTTP_RESPONSE_CODE, CONTENT_TYPE);
 
         from("direct:createUserDetails")
