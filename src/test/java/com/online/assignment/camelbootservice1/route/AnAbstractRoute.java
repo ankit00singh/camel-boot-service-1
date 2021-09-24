@@ -9,6 +9,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.online.assignment.camelbootservice1.models.User;
+
 /**
  * Abstract Route.
  *
@@ -16,19 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class AnAbstractRoute {
 
-    @EndpointInject(uri = "direct:in")
-    DirectEndpoint inputEndpoint;
-
-    @EndpointInject(uri = "mock:result")
-    MockEndpoint resultEndpoint;
-
-    @EndpointInject(uri = "mock:cancelPSSResult")
-    MockEndpoint cancelPssResultEndpoint;
-
-    @Autowired
-    ModelCamelContext modelCamelContext;
-
-    @Produce
-    ProducerTemplate template;
+    public static User buildUserDataRequest() throws Exception {
+        User user = new User();
+        user.setUserId(2);
+        user.setName("Hello");
+        user.setDob("20-08-2020");
+        user.setSalary(122111241.150);
+        user.setAge(20L);
+        return user;
+    }
 
 }

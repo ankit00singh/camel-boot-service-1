@@ -3,8 +3,6 @@ package com.online.assignment.camelbootservice1.validators;
 import org.apache.camel.Exchange;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.online.assignment.camelbootservice1.exception.ValidationException;
@@ -12,8 +10,6 @@ import com.online.assignment.camelbootservice1.models.User;
 
 @Component("userValidators")
 public class UserValidators {
-
-    Logger logger = LoggerFactory.getLogger(UserValidators.class);
 
     public void validateUserRequest(final Exchange exchange) throws ValidationException {
         final User request = exchange.getIn().getBody(User.class);

@@ -12,4 +12,5 @@ public class UserConstants {
     //Other constants
     public static final String USER_ID = "userId";
     public static final String FILE_TYPE = "fileType";
+    public static final String USER_DATA_RESPONSE = "userDataResponse";
 }

@@ -65,20 +65,42 @@
 			<version>${camel.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-activemq-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-crypto-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>com.jayway.restassured</groupId>
+		    <groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
-			<version>2.4.1</version>
+			<version>4.2.1</version>
 			<scope>test</scope>
 	    </dependency>
 		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>xml-path</artifactId>
+			<version>4.2.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-path</artifactId>
+			<version>4.2.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test-spring</artifactId>
+			<artifactId>camel-test-spring-junit5</artifactId>
 			<version>${camel.version}</version>
 			<scope>test</scope>
     	</dependency>

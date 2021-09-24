@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class CamelBootService1Application {
 
-    @Value("${rest.api.base.url:/com/car/v1}")
+    @Value("${rest.api.base.url:/com/user/service1/v1}")
     private String restApiBaseUrl;
 
     public static void main(String[] args) {

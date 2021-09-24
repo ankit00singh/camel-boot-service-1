@@ -1,43 +1,64 @@
 package com.online.assignment.camelbootservice1.route;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.camel.*;
+import org.apache.camel.builder.AdviceWith;
 
-import javax.ws.rs.core.Application;
-
-import org.apache.camel.builder.AdviceWithRouteBuilder;
-
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringRunner;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit5.CamelSpringTestContextLoader;
+import org.apache.http.HttpStatus;
 import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
+import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import static com.online.assignment.camelbootservice1.constants.UserConstants.GET_USER_ROUTE_ID;
-import static com.online.assignment.camelbootservice1.constants.UserConstants.ROUTE_END;
+import com.online.assignment.camelbootservice1.CamelBootService1Application;
+import com.online.assignment.camelbootservice1.models.User;
 
-@RunWith(CamelSpringRunner.class)
-@ContextConfiguration(classes = Application.class, loader = CamelSpringDelegatingTestContextLoader.class)
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import static com.online.assignment.camelbootservice1.constants.UserConstants.*;
+
+@CamelSpringTest
+@ContextConfiguration(loader = CamelSpringTestContextLoader.class, classes = CamelBootService1Application.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AUserExposeRouteTest extends AnAbstractRoute {
 
-    private Map<String, Object> headers;
+    @Autowired
+    private ModelCamelContext camelContext;
 
-   /* @Before
-    public void setUp() throws Exception {
+    @EndpointInject("mock:result")
+    private MockEndpoint mockResult;
 
-        MockitoAnnotations.initMocks(this);
-        RouteDefinition route = modelCamelContext.getRouteDefinition(GET_USER_ROUTE_ID);
-        route.get()adviceWith(modelCamelContext, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                replaceFromWith(inputEndpoint);
-                weaveById(ROUTE_END).after().to(resultEndpoint);
-            }
-        });
+    @Produce("direct:createUserDetails")
+    private ProducerTemplate start;
 
-        resultEndpoint.reset();
-        headers = new HashMap<>();
-    }*/
+    @BeforeEach
+    public void setup() throws Exception {
+        AdviceWith.adviceWith(camelContext, CREATE_USER_ROUTE_ID, route -> route.weaveAddLast().to(mockResult));
+        mockResult.reset();
+    }
+
+    @Test
+    public void whenUserNameIsInvalid() throws Exception {
+
+        //Given
+        final User request = buildUserDataRequest();
+        //setting invalid name
+        request.setName("Hello4");
+
+        mockResult.expectedMessageCount(1);
+
+        //When
+        start.sendBodyAndHeader(request, FILE_TYPE, "CSV");
+
+        //Then
+        final Exchange exchange = mockResult.getReceivedExchanges().get(0);
+        assertNotNull(exchange);
+        assertEquals(HttpStatus.SC_BAD_REQUEST, exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
+    }
 }

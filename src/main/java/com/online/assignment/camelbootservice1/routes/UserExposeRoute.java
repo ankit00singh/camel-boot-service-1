@@ -1,14 +1,18 @@
 package com.online.assignment.camelbootservice1.routes;
 
+import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.online.assignment.camelbootservice1.models.User;
+import com.online.assignment.camelbootservice1.service.UserEncryptionData;
 
 import static com.online.assignment.camelbootservice1.constants.UserConstants.*;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -19,6 +23,9 @@ import static org.apache.camel.model.rest.RestParamType.path;
 
 @Component("userExposeRoute")
 public class UserExposeRoute extends AbstractUserRoute {
+
+    @Autowired
+    UserEncryptionData userEncryptionData;
 
     @Value("${rest.api.base.url:/com/user/service1/v1}")
     private String restApiBaseUrl;
@@ -93,6 +100,7 @@ public class UserExposeRoute extends AbstractUserRoute {
             .param().name(FILE_TYPE).type(path).description("Input File Type").dataType("string").endParam()
             .responseMessage().code(200).message("Update User Response model").responseModel(User.class).endResponseMessage()
             .description("Update User details to file")
+            .type(User.class)
             .outType(User.class)
             .to("direct:updateUserDetails");
 
@@ -115,6 +123,11 @@ public class UserExposeRoute extends AbstractUserRoute {
             .end()
             .log(LoggingLevel.INFO, "Create User Details request received for File Type : ${headers." + FILE_TYPE + "}")
             .bean("userValidators", "validateUserRequest")
+            .setHeader(USER_DATA_RESPONSE, body())
+                .marshal().json(JsonLibrary.Jackson)
+                .marshal(userEncryptionData.createEncryptor())
+                .wireTap("activemq:user-encryptor-active-mq")
+            .setBody(header(USER_DATA_RESPONSE))
             .removeHeaders("*", HTTP_RESPONSE_CODE, CONTENT_TYPE);
 
         from("direct:updateUserDetails")
@@ -125,6 +138,11 @@ public class UserExposeRoute extends AbstractUserRoute {
             .end()
             .log(LoggingLevel.INFO, "Update User Details request received for File Type : ${headers." + FILE_TYPE + "}")
             .bean("userValidators", "validateUserRequest")
+            .setHeader(USER_DATA_RESPONSE, body())
+                .marshal().json(JsonLibrary.Jackson)
+                .marshal(userEncryptionData.createEncryptor())
+                .wireTap("activemq:user-update-encryptor-active-mq")
+            .setBody(header(USER_DATA_RESPONSE))
             .removeHeaders("*", HTTP_RESPONSE_CODE, CONTENT_TYPE);
 
         }
