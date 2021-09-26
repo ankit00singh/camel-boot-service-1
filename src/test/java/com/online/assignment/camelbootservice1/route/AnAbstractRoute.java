@@ -1,14 +1,12 @@
 package com.online.assignment.camelbootservice1.route;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ModelCamelContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.IOException;
 
+import org.springframework.test.context.TestPropertySource;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.online.assignment.camelbootservice1.models.User;
 
 /**
@@ -16,6 +14,7 @@ import com.online.assignment.camelbootservice1.models.User;
  *
  * @author Ankit Kumar
  */
+@TestPropertySource(locations = {"file:src/main/resources/application.properties"})
 public abstract class AnAbstractRoute {
 
     public static User buildUserDataRequest() throws Exception {
@@ -26,6 +25,10 @@ public abstract class AnAbstractRoute {
         user.setSalary(122111241.150);
         user.setAge(20L);
         return user;
+    }
+    public static <T> T unmarshal(String json, Class<T> clazz) throws JsonParseException, JsonMappingException, IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, clazz);
     }
 
 }

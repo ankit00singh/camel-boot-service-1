@@ -52,11 +52,11 @@ The package structure should look like this:
 
 ## API Docs
 
-Swagger API documentation is exposed at [Swagger URL](http://localhost:9093/com/car/v1/apidocs)
+Swagger API documentation is exposed at [Swagger URL](http://localhost:9093/com/user/service1/v1/apidocs)
 
 ## Actuator
 
-Spring Actuator endpoints are available to view at [Actuator URL](http://localhost:8080/actuator)
+Spring Actuator endpoints are available to view at [Actuator URL](http://localhost:9093/actuator/)
 
 All actuator endpoints are exposed, you can configure them via the property `management.endpoints.web.exposure.include`
 in the `application.properties` [config file](config/application.properties)
