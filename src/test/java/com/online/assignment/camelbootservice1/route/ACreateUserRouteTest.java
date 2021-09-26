@@ -29,7 +29,7 @@ import static com.online.assignment.camelbootservice1.constants.UserConstants.RO
 @CamelSpringTest
 @ContextConfiguration(loader = CamelSpringTestContextLoader.class, classes = CamelBootService1Application.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class AUserExposeRouteTest extends AnAbstractRoute {
+public class ACreateUserRouteTest extends AnAbstractRoute {
 
     @Autowired
     private ModelCamelContext camelContext;
