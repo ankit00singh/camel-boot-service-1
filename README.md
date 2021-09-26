@@ -60,3 +60,5 @@ Spring Actuator endpoints are available to view at [Actuator URL](http://localho
 
 All actuator endpoints are exposed, you can configure them via the property `management.endpoints.web.exposure.include`
 in the `application.properties` [config file](config/application.properties)
+
+## TODO : Implementation of proto buffer google format

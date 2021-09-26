@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.assignment.user;
+
+message User {
+  int32 userId = 1;
+  string name = 2;
+  int64 age = 3;
+  string dob = 4;
+  double salary = 5;
+}
